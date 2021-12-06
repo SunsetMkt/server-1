@@ -413,7 +413,6 @@ class FileTest extends TestCase {
 
 		if ($resultMtime === null) {
 			$this->expectException(\InvalidArgumentException::class);
-			$this->expectExceptionMessage("X-OC-MTime header must be an integer (unix timestamp).");
 		}
 
 		$this->doPut($file, null, $request);
@@ -439,7 +438,6 @@ class FileTest extends TestCase {
 
 		if ($resultMtime === null) {
 			$this->expectException(\Sabre\DAV\Exception::class);
-			$this->expectExceptionMessage("X-OC-MTime header must be an integer (unix timestamp).");
 		}
 
 		$this->doPut($file.'-chunking-12345-2-0', null, $request);
