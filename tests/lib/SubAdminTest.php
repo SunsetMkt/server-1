@@ -21,6 +21,7 @@
 
 namespace Test;
 
+use OC\Files\SetupManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Group\Events\SubAdminAddedEvent;
 use OCP\Group\Events\SubAdminRemovedEvent;
@@ -49,6 +50,12 @@ class SubAdminTest extends \Test\TestCase {
 	private $groups;
 
 	protected function setUp(): void {
+		parent::setUp();
+
+		/** @var SetupManager $setup */
+		$setup = \OC::$server->get(SetupManager::class);
+		$setup->setupRoot();
+
 		$this->users = [];
 		$this->groups = [];
 

@@ -10,6 +10,7 @@ namespace Test\Files\Config;
 
 use OC\DB\QueryBuilder\Literal;
 use OC\Files\Mount\MountPoint;
+use OC\Files\SetupManager;
 use OC\Files\Storage\Storage;
 use OC\Log;
 use OC\User\Manager;
@@ -65,6 +66,10 @@ class UserMountCacheTest extends TestCase {
 		$userBackend->createUser('u3', '');
 		$this->userManager->registerBackend($userBackend);
 		$this->cache = new \OC\Files\Config\UserMountCache($this->connection, $this->userManager, $this->createMock(Log::class));
+
+		/** @var SetupManager $setupManager */
+		$setupManager = \OC::$server->get(SetupManager::class);
+		$setupManager->setupRoot();
 	}
 
 	protected function tearDown(): void {

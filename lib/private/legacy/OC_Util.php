@@ -67,11 +67,9 @@
 use bantu\IniGetWrapper\IniGetWrapper;
 use OC\AppFramework\Http\Request;
 use OC\Files\SetupManager;
-use OC\Files\Storage\LocalRootStorage;
 use OCP\Files\Template\ITemplateManager;
 use OCP\IConfig;
 use OCP\IGroupManager;
-use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\Share\IManager;
@@ -114,6 +112,7 @@ class OC_Util {
 		} else {
 			$setupManager->setupRoot();
 		}
+		return true;
 	}
 
 	/**
@@ -266,10 +265,9 @@ class OC_Util {
 	 * @suppress PhanUndeclaredMethod
 	 */
 	public static function tearDownFS() {
-		\OC\Files\Filesystem::tearDown();
-		\OC::$server->getRootFolder()->clearCache();
-		self::$fsSetup = false;
-		self::$rootFsSetup = false;
+		/** @var SetupManager $setupManager */
+		$setupManager = \OC::$server->get(SetupManager::class);
+		$setupManager->tearDown();
 	}
 
 	/**
