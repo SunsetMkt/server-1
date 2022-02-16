@@ -271,11 +271,15 @@ class Connection extends \Doctrine\DBAL\Connection {
 	}
 
 	protected function logQueryToFile(string $sql): void {
-		$logFile = $this->systemConfig->getValue('query_log_file', '');
+		$logFile = $this->systemConfig->getValue('query_log_file');
+		$prefix = '';
+		if ($this->systemConfig->getValue('query_log_file_requestid') === 'yes') {
+			$prefix .= \OC::$server->get(\OCP\IRequestId::class)->getId() . "\t";
+		}
 		if ($logFile !== '' && is_writable(dirname($logFile)) && (!file_exists($logFile) || is_writable($logFile))) {
 			file_put_contents(
 				$this->systemConfig->getValue('query_log_file', ''),
-				$sql . "\n",
+				$prefix . $sql . "\n",
 				FILE_APPEND
 			);
 		}
