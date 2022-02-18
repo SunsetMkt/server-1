@@ -1033,7 +1033,7 @@ class Server extends ServerContainer implements IServerContainer {
 						: '',
 					'urlParams' => $urlParams,
 				],
-				$this->get(\OCP\IRequestId::class),
+				$this->get(IRequestId::class),
 				$this->get(\OCP\IConfig::class),
 				$this->get(CsrfTokenManager::class),
 				$stream
@@ -1042,7 +1042,7 @@ class Server extends ServerContainer implements IServerContainer {
 		/** @deprecated 19.0.0 */
 		$this->registerDeprecatedAlias('Request', \OCP\IRequest::class);
 
-		$this->registerService(\OCP\IRequestId::class, function (ContainerInterface $c) {
+		$this->registerService(IRequestId::class, function (ContainerInterface $c): IRequestId {
 			return new RequestId(
 				$_SERVER['UNIQUE_ID'] ?? '',
 				$this->get(ISecureRandom::class)
