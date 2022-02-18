@@ -457,6 +457,13 @@ class ViewControllerTest extends TestCase {
 			->with('files.view.index', ['dir' => '/test/sub'])
 			->willReturn('/apps/files/?dir=/test/sub');
 
+		$this->activityHelper->method('getFavoriteFilePaths')
+			->with($this->user->getUID())
+			->willReturn([
+				'item' => [],
+				'folders' => [],
+			]);
+
 		$expected = new Http\RedirectResponse('/apps/files/?dir=/test/sub');
 		$this->assertEquals($expected, $this->viewController->index('/whatever', '', '123'));
 	}
@@ -497,6 +504,13 @@ class ViewControllerTest extends TestCase {
 			->with('files.view.index', ['dir' => '/test', 'scrollto' => 'somefile.txt'])
 			->willReturn('/apps/files/?dir=/test/sub&scrollto=somefile.txt');
 
+		$this->activityHelper->method('getFavoriteFilePaths')
+			->with($this->user->getUID())
+			->willReturn([
+				'item' => [],
+				'folders' => [],
+			]);
+
 		$expected = new Http\RedirectResponse('/apps/files/?dir=/test/sub&scrollto=somefile.txt');
 		$this->assertEquals($expected, $this->viewController->index('/whatever', '', '123'));
 	}
@@ -517,6 +531,13 @@ class ViewControllerTest extends TestCase {
 			->method('linkToRoute')
 			->with('files.view.index', ['fileNotFound' => true])
 			->willReturn('redirect.url');
+
+		$this->activityHelper->method('getFavoriteFilePaths')
+			->with($this->user->getUID())
+			->willReturn([
+				'item' => [],
+				'folders' => [],
+			]);
 
 		$response = $this->viewController->index('MyDir', 'MyView', '123');
 		$this->assertInstanceOf('OCP\AppFramework\Http\RedirectResponse', $response);
@@ -573,6 +594,13 @@ class ViewControllerTest extends TestCase {
 			->method('linkToRoute')
 			->with('files.view.index', ['view' => 'trashbin', 'dir' => '/test.d1462861890/sub', 'scrollto' => 'somefile.txt'])
 			->willReturn('/apps/files/?view=trashbin&dir=/test.d1462861890/sub&scrollto=somefile.txt');
+
+		$this->activityHelper->method('getFavoriteFilePaths')
+			->with($this->user->getUID())
+			->willReturn([
+				'item' => [],
+				'folders' => [],
+			]);
 
 		$expected = new Http\RedirectResponse('/apps/files/?view=trashbin&dir=/test.d1462861890/sub&scrollto=somefile.txt');
 		$this->assertEquals($expected, $this->viewController->index('/whatever', '', '123'));
