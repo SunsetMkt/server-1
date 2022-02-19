@@ -1131,13 +1131,13 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 		}, $matches);
 
 		$cards = [];
-		foreach (array_chunk($matches, 1000) as $matche) {
+		foreach (array_chunk($matches, 1000) as $match) {
 			$query = $this->db->getQueryBuilder();
 			$query->select('c.addressbookid', 'c.carddata', 'c.uri')
 				->from($this->dbCardsTable, 'c')
-				->where($query->expr()->in('c.id', $query->createNamedParameter($matche, IQueryBuilder::PARAM_INT_ARRAY)));
+				->where($query->expr()->in('c.id', $query->createNamedParameter($match, IQueryBuilder::PARAM_INT_ARRAY)));
 
-			$result = $query->execute();
+			$result = $query->executeQuery();
 			$cards = array_merge($cards, $result->fetchAll());
 			$result->closeCursor();
 		}
