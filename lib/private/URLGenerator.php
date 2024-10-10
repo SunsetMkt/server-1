@@ -43,7 +43,7 @@ class URLGenerator implements IURLGenerator {
 		IUserSession $userSession,
 		ICacheFactory $cacheFactory,
 		IRequest $request,
-		Router $router
+		Router $router,
 	) {
 		$this->config = $config;
 		$this->userSession = $userSession;
@@ -96,7 +96,7 @@ class URLGenerator implements IURLGenerator {
 	public function linkToOCSRouteAbsolute(string $routeName, array $arguments = []): string {
 		// Returns `/subfolder/index.php/ocsapp/…` with `'htaccess.IgnoreFrontController' => false` in config.php
 		// And `/subfolder/ocsapp/…` with `'htaccess.IgnoreFrontController' => true` in config.php
-		$route = $this->router->generate('ocs.'.$routeName, $arguments, false);
+		$route = $this->router->generate('ocs.' . $routeName, $arguments, false);
 
 		// Cut off `/subfolder`
 		if (\OC::$WEBROOT !== '' && str_starts_with($route, \OC::$WEBROOT)) {
@@ -176,8 +176,8 @@ class URLGenerator implements IURLGenerator {
 	 * Returns the path to the image.
 	 */
 	public function imagePath(string $appName, string $file): string {
-		$cache = $this->cacheFactory->createDistributed('imagePath-'.md5($this->getBaseUrl()).'-');
-		$cacheKey = $appName.'-'.$file;
+		$cache = $this->cacheFactory->createDistributed('imagePath-' . md5($this->getBaseUrl()) . '-');
+		$cacheKey = $appName . '-' . $file;
 		if ($key = $cache->get($cacheKey)) {
 			return $key;
 		}
@@ -255,7 +255,7 @@ class URLGenerator implements IURLGenerator {
 
 	/**
 	 * Makes an URL absolute
-	 * @param string $url the url in the ownCloud host
+	 * @param string $url the url in the Nextcloud host
 	 * @return string the absolute version of the url
 	 */
 	public function getAbsoluteURL(string $url): string {
@@ -264,7 +264,7 @@ class URLGenerator implements IURLGenerator {
 		if (\OC::$CLI && !\defined('PHPUNIT_RUN')) {
 			return rtrim($this->config->getSystemValueString('overwrite.cli.url'), '/') . '/' . ltrim($url, '/');
 		}
-		// The ownCloud web root can already be prepended.
+		// The Nextcloud web root could already be prepended.
 		if (\OC::$WEBROOT !== '' && str_starts_with($url, \OC::$WEBROOT)) {
 			$url = substr($url, \strlen(\OC::$WEBROOT));
 		}

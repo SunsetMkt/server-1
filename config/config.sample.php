@@ -745,6 +745,11 @@ $CONFIG = [
 /**
  * If the trash bin app is enabled (default), this setting defines the policy
  * for when files and folders in the trash bin will be permanently deleted.
+ *
+ * If the user quota limit is exceeded due to deleted files in the trash bin,
+ * retention settings will be ignored and files will be cleaned up until
+ * the quota requirements are met.
+ *
  * The app allows for two settings, a minimum time for trash bin retention,
  * and a maximum time for trash bin retention.
  *
@@ -2528,4 +2533,20 @@ $CONFIG = [
  * Defaults to ``true``
  */
 'enable_non-accessible_features' => true,
+
+/**
+ * Directories where nextcloud looks for binaries.
+ * This is used to find external binaries like libreoffice, sendmail, ffmpeg and more.
+ *
+ * Defaults to ``['/usr/local/sbin','/usr/local/bin','/usr/sbin','/usr/bin','/sbin','/bin','/opt/bin']``
+ */
+'binary_search_paths' => [
+	'/usr/local/sbin',
+	'/usr/local/bin',
+	'/usr/sbin',
+	'/usr/bin',
+	'/sbin',
+	'/bin',
+	'/opt/bin',
+],
 ];

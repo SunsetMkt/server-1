@@ -13,6 +13,7 @@ use OCA\Theming\ThemingDefaults;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -25,30 +26,24 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class ThemingControllerTest extends TestCase {
-	/** @var IRequest|MockObject */
-	private $request;
-	/** @var IConfig|MockObject */
-	private $config;
-	/** @var ThemingDefaults|MockObject */
-	private $themingDefaults;
-	/** @var IL10N|MockObject */
-	private $l10n;
-	/** @var ThemingController */
-	private $themingController;
-	/** @var IAppManager|MockObject */
-	private $appManager;
-	/** @var ImageManager|MockObject */
-	private $imageManager;
-	/** @var IURLGenerator|MockObject */
-	private $urlGenerator;
-	/** @var ThemesService|MockObject */
-	private $themesService;
-	/** @var INavigationManager|MockObject */
-	private $navigationManager;
+
+	private IRequest&MockObject $request;
+	private IConfig&MockObject $config;
+	private IAppConfig&MockObject $appConfig;
+	private ThemingDefaults&MockObject $themingDefaults;
+	private IL10N&MockObject $l10n;
+	private IAppManager&MockObject $appManager;
+	private ImageManager&MockObject $imageManager;
+	private IURLGenerator&MockObject $urlGenerator;
+	private ThemesService&MockObject $themesService;
+	private INavigationManager&MockObject $navigationManager;
+
+	private ThemingController $themingController;
 
 	protected function setUp(): void {
 		$this->request = $this->createMock(IRequest::class);
 		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->themingDefaults = $this->createMock(ThemingDefaults::class);
 		$this->l10n = $this->createMock(L10N::class);
 		$this->appManager = $this->createMock(IAppManager::class);
@@ -68,6 +63,7 @@ class ThemingControllerTest extends TestCase {
 			'theming',
 			$this->request,
 			$this->config,
+			$this->appConfig,
 			$this->themingDefaults,
 			$this->l10n,
 			$this->urlGenerator,
@@ -100,7 +96,7 @@ class ThemingControllerTest extends TestCase {
 	 * @param string $value
 	 * @param string $message
 	 */
-	public function testUpdateStylesheetSuccess($setting, $value, $message) {
+	public function testUpdateStylesheetSuccess($setting, $value, $message): void {
 		$this->themingDefaults
 			->expects($this->once())
 			->method('set')
@@ -151,7 +147,7 @@ class ThemingControllerTest extends TestCase {
 	 * @param string $value
 	 * @param string $message
 	 */
-	public function testUpdateStylesheetError($setting, $value, $message) {
+	public function testUpdateStylesheetError($setting, $value, $message): void {
 		$this->themingDefaults
 			->expects($this->never())
 			->method('set')
@@ -176,7 +172,7 @@ class ThemingControllerTest extends TestCase {
 		$this->assertEquals($expected, $this->themingController->updateStylesheet($setting, $value));
 	}
 
-	public function testUpdateLogoNoData() {
+	public function testUpdateLogoNoData(): void {
 		$this->request
 			->expects($this->once())
 			->method('getParam')
@@ -208,7 +204,7 @@ class ThemingControllerTest extends TestCase {
 		$this->assertEquals($expected, $this->themingController->uploadImage());
 	}
 
-	public function testUploadInvalidUploadKey() {
+	public function testUploadInvalidUploadKey(): void {
 		$this->request
 			->expects($this->once())
 			->method('getParam')
@@ -245,7 +241,7 @@ class ThemingControllerTest extends TestCase {
 	 * @test
 	 * @return void
 	 */
-	public function testUploadSVGFaviconWithoutImagemagick() {
+	public function testUploadSVGFaviconWithoutImagemagick(): void {
 		$this->imageManager
 			->method('shouldReplaceIcons')
 			->willReturn(false);
@@ -260,7 +256,7 @@ class ThemingControllerTest extends TestCase {
 			->method('getUploadedFile')
 			->with('image')
 			->willReturn([
-				'tmp_name' => __DIR__  . '/../../../../tests/data/testimagelarge.svg',
+				'tmp_name' => __DIR__ . '/../../../../tests/data/testimagelarge.svg',
 				'type' => 'image/svg',
 				'name' => 'testimagelarge.svg',
 				'error' => 0,
@@ -290,7 +286,7 @@ class ThemingControllerTest extends TestCase {
 		$this->assertEquals($expected, $this->themingController->uploadImage());
 	}
 
-	public function testUpdateLogoInvalidMimeType() {
+	public function testUpdateLogoInvalidMimeType(): void {
 		$this->request
 			->expects($this->once())
 			->method('getParam')
@@ -301,7 +297,7 @@ class ThemingControllerTest extends TestCase {
 			->method('getUploadedFile')
 			->with('image')
 			->willReturn([
-				'tmp_name' => __DIR__  . '/../../../../tests/data/lorem.txt',
+				'tmp_name' => __DIR__ . '/../../../../tests/data/lorem.txt',
 				'type' => 'application/pdf',
 				'name' => 'logo.pdf',
 				'error' => 0,
@@ -343,7 +339,7 @@ class ThemingControllerTest extends TestCase {
 	}
 
 	/** @dataProvider dataUpdateImages */
-	public function testUpdateLogoNormalLogoUpload($mimeType, $folderExists = true) {
+	public function testUpdateLogoNormalLogoUpload($mimeType, $folderExists = true): void {
 		$tmpLogo = \OC::$server->getTempManager()->getTemporaryFolder() . '/logo.svg';
 		$destination = \OC::$server->getTempManager()->getTemporaryFolder();
 
@@ -395,7 +391,7 @@ class ThemingControllerTest extends TestCase {
 	}
 
 	/** @dataProvider dataUpdateImages */
-	public function testUpdateLogoLoginScreenUpload($folderExists) {
+	public function testUpdateLogoLoginScreenUpload($folderExists): void {
 		$tmpLogo = \OC::$server->getTempManager()->getTemporaryFolder() . 'logo.png';
 
 		touch($tmpLogo);
@@ -443,11 +439,11 @@ class ThemingControllerTest extends TestCase {
 		$this->assertEquals($expected, $this->themingController->uploadImage());
 	}
 
-	public function testUpdateLogoLoginScreenUploadWithInvalidImage() {
+	public function testUpdateLogoLoginScreenUploadWithInvalidImage(): void {
 		$tmpLogo = \OC::$server->getTempManager()->getTemporaryFolder() . '/logo.svg';
 
 		touch($tmpLogo);
-		file_put_contents($tmpLogo, file_get_contents(__DIR__  . '/../../../../tests/data/data.zip'));
+		file_put_contents($tmpLogo, file_get_contents(__DIR__ . '/../../../../tests/data/data.zip'));
 		$this->request
 			->expects($this->once())
 			->method('getParam')
@@ -502,7 +498,7 @@ class ThemingControllerTest extends TestCase {
 	/**
 	 * @dataProvider dataPhpUploadErrors
 	 */
-	public function testUpdateLogoLoginScreenUploadWithInvalidImageUpload($error, $expectedErrorMessage) {
+	public function testUpdateLogoLoginScreenUploadWithInvalidImageUpload($error, $expectedErrorMessage): void {
 		$this->request
 			->expects($this->once())
 			->method('getParam')
@@ -541,7 +537,7 @@ class ThemingControllerTest extends TestCase {
 	/**
 	 * @dataProvider dataPhpUploadErrors
 	 */
-	public function testUpdateLogoUploadWithInvalidImageUpload($error, $expectedErrorMessage) {
+	public function testUpdateLogoUploadWithInvalidImageUpload($error, $expectedErrorMessage): void {
 		$this->request
 			->expects($this->once())
 			->method('getParam')
@@ -577,7 +573,7 @@ class ThemingControllerTest extends TestCase {
 		$this->assertEquals($expected, $this->themingController->uploadImage());
 	}
 
-	public function testUndo() {
+	public function testUndo(): void {
 		$this->l10n
 			->expects($this->once())
 			->method('t')
@@ -610,7 +606,7 @@ class ThemingControllerTest extends TestCase {
 	}
 
 	/** @dataProvider dataUndoDelete */
-	public function testUndoDelete($value, $filename) {
+	public function testUndoDelete($value, $filename): void {
 		$this->l10n
 			->expects($this->once())
 			->method('t')
@@ -637,7 +633,7 @@ class ThemingControllerTest extends TestCase {
 
 
 
-	public function testGetLogoNotExistent() {
+	public function testGetLogoNotExistent(): void {
 		$this->imageManager->method('getImage')
 			->with($this->equalTo('logo'))
 			->willThrowException(new NotFoundException());
@@ -646,7 +642,7 @@ class ThemingControllerTest extends TestCase {
 		$this->assertEquals($expected, $this->themingController->getImage('logo'));
 	}
 
-	public function testGetLogo() {
+	public function testGetLogo(): void {
 		$file = $this->createMock(ISimpleFile::class);
 		$file->method('getName')->willReturn('logo.svg');
 		$file->method('getMTime')->willReturn(42);
@@ -670,7 +666,7 @@ class ThemingControllerTest extends TestCase {
 	}
 
 
-	public function testGetLoginBackgroundNotExistent() {
+	public function testGetLoginBackgroundNotExistent(): void {
 		$this->imageManager->method('getImage')
 			->with($this->equalTo('background'))
 			->willThrowException(new NotFoundException());
@@ -678,7 +674,7 @@ class ThemingControllerTest extends TestCase {
 		$this->assertEquals($expected, $this->themingController->getImage('background'));
 	}
 
-	public function testGetLoginBackground() {
+	public function testGetLoginBackground(): void {
 		$file = $this->createMock(ISimpleFile::class);
 		$file->method('getName')->willReturn('background.png');
 		$file->method('getMTime')->willReturn(42);
@@ -702,7 +698,7 @@ class ThemingControllerTest extends TestCase {
 		@$this->assertEquals($expected, $this->themingController->getImage('background'));
 	}
 
-	public function testGetManifest() {
+	public function testGetManifest(): void {
 		$this->config
 			->expects($this->once())
 			->method('getAppValue')
@@ -719,13 +715,10 @@ class ThemingControllerTest extends TestCase {
 		$this->urlGenerator
 			->expects($this->exactly(2))
 			->method('linkToRoute')
-			->withConsecutive(
-				['theming.Icon.getTouchIcon', ['app' => 'core']],
-				['theming.Icon.getFavicon', ['app' => 'core']],
-			)->willReturnOnConsecutiveCalls(
-				'touchicon',
-				'favicon',
-			);
+			->willReturnMap([
+				['theming.Icon.getTouchIcon', ['app' => 'core'], 'touchicon'],
+				['theming.Icon.getFavicon', ['app' => 'core'], 'favicon'],
+			]);
 		$response = new Http\JSONResponse([
 			'name' => 'Nextcloud',
 			'start_url' => 'localhost',
